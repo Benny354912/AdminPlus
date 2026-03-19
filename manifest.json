@@ -1,0 +1,33 @@
+{
+  "manifest_version": 2,
+  "name": "AdminPlus (Ewige Beta)",
+  "version": "1.0.1",
+  "description": "Erweitert Verwaltungsportale (Inwendo Vereinssoftware) um zusätzliche Funktionen. Dies ist ein kleines, privat entwickeltes Projekt, das nicht offiziell von den Anbietern der Portale unterstützt wird. Es könnte Fehler enthalten und ist möglicherweise nicht mit allen Versionen der Portale kompatibel. Verwenden Sie es auf eigenes Risiko.",
+  "permissions": ["activeTab", "tabs", "<all_urls>"],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://iw-admin.de/*",
+        "https://verwaltung.turn-klubb.de/*",
+        "https://*.iw-erp.de/*"
+      ],
+      "js": ["content.js"]
+    }
+  ],
+  "browser_action": {
+    "default_title": "AdminPlus"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "adminplus@inwendo.local",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
+  "web_accessible_resources": ["sidebar.html", "style.css", "vendor/peerjs.min.js", "vendor/qrcode.min.js"],
+  "content_security_policy": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; connect-src 'self' https://0.peerjs.com wss://0.peerjs.com https://*.iw-erp.de"
+}

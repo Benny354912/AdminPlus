@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inwendo Vereinssoftware AdminPlus (Ewige Beta)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+        <button class="nav-item active" data-page="start">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+            </svg>
+            Start
+        </button>
+        <button class="nav-item" data-page="adressen">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+            </svg>
+            Adressen
+        </button>
+    </nav>
+
+    <!-- Seiteninhalt -->
+    <div class="page-container">
+        <!-- Start Seite -->
+        <div class="page active" id="page-start">
+            <div class="page-header">
+                <h1>Willkommen bei AdminPlus</h1>
+                <p class="subtitle">Ihre Erweiterung für Verwaltungsportale</p>
+            </div>
+
+            <div class="info-box">
+                <h3>👋 Herzlich willkommen!</h3>
+                <p>
+                    AdminPlus erweitert Ihr Verwaltungsportal um zusätzliche Funktionen und Ansichten.
+                    Diese Erweiterung befindet sich noch in der Entwicklung und wird kontinuierlich verbessert.
+                    Wir freuen uns über Ihr Feedback und Ihre Anregungen.
+                    Die Nutzung dieses Tools erfolgt auf eigene Verantwortung und ohne Gewähr.
+                    Eine Nutzung, Verbreitung oder Modifikation ist nur mit Erlaubnis und Zustimmung vom Entwickler erlaubt.
+                    <br> <b>Copyright © 2026 Benny354912.</b>
+                </p>
+            </div>
+
+            <div class="info-box" id="login-status-box">
+                <h3>🔐 Anmeldung</h3>
+                <p id="login-required-text">Bitte melden Sie sich zuerst an, um weitere Bereiche zu sehen.</p>
+                <div id="login-success-container" class="hidden">
+                    <div class="login-info">
+                        <img id="profile-picture" class="profile-picture hidden" src="" alt="Profilbild" />
+                        <img id="instance-logo" class="instance-logo hidden" src="" alt="Logo" />
+                        <div>
+                            <p id="login-success-text">Angemeldet als <strong><span id="user-fullname"></span></strong></p>
+                            <p id="instance-name-text" class="instance-name hidden">Organisation: <strong><span id="instance-name"></span></strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box" id="easy-login-box">
+                <div class="easy-login-header">
+                    <div>
+                        <h3>⚡ Easy Login</h3>
+                        <p class="subtitle">Scanne den QR‑Code mit der PWA, um dich schnell am Desktop anzumelden.</p>
+                    </div>
+                    <button class="btn-secondary" id="refresh-qr">QR neu</button>
+                </div>
+                <div class="easy-login-body">
+                    <div class="qr-card">
+                        <div class="qr-image-wrapper">
+                            <div id="easy-login-qr"></div>
+                        </div>
+                        <div class="qr-meta">
+                            <div class="status-pill" id="easy-login-status">Initialisiere…</div>
+                            <div class="qr-detail">
+                                <span class="label">Peer‑ID</span>
+                                <span class="value" id="easy-login-peer">---</span>
+                            </div>
+                            <div class="qr-detail">
+                                <span class="label">Instanz</span>
+                                <span class="value" id="easy-login-instance">---</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="easy-login-hint">
+                        <ol>
+                            <li>PWA öffnen → QR‑Code scannen</li>
+                            <li>Login auswählen oder manuell eingeben</li>
+                            <li>Login absenden → AdminPlus meldet sich an</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Adressen Seite -->
+        <div class="page" id="page-adressen">
+            <div class="page-header">
+                <h1>Adressverwaltung</h1>
+                <p class="subtitle">Mitglieder und Adressen verwalten</p>
+            </div>
+
+            <!-- Statistiken -->
+            <div class="stats-bar">
+                <div class="stat-card">
+                    <span class="stat-label">Gesamt</span>
+                    <span class="stat-value" id="total-users">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Geladen</span>
+                    <span class="stat-value" id="filtered-users">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Ausgewählt</span>
+                    <span class="stat-value" id="selected-users-count">0</span>
+                </div>
+            </div>
+
+            <!-- Filterbereich -->
+            <div class="filter-section">
+                <div class="filter-row">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="address-search" placeholder="Suche nach Name, Adresse, Nummer...">
+                        <button class="clear-search hidden" id="clear-search">×</button>
+                    </div>
+                    <button class="btn-secondary" id="toggle-filters">
+                        <span class="filter-icon">⚙</span>
+                        <span id="filter-toggle-text">Filter anzeigen</span>
+                        <span class="filter-badge hidden" id="active-filters-badge">0</span>
+                    </button>
+                </div>
+
+                <div class="filter-panel hidden" id="filter-panel">
+                    <div class="filter-group">
+                        <h4>Sortierung:</h4>
+                        <div style="display: flex; gap: 8px;">
+                            <select id="sort-field" style="flex: 1;">
+                                <option value="firstName">Vorname</option>
+                                <option value="lastName">Nachname</option>
+                                <option value="birthday">Geburtstag</option>
+                                <option value="numberString">Mitgliedsnummer</option>
+                                <option value="created">Erstellungsdatum</option>
+                            </select>
+                            <select id="sort-order">
+                                <option value="ASC">Aufsteigend</option>
+                                <option value="DESC">Absteigend</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>
+                            <input type="checkbox" id="filter-active-members" checked>
+                            Nur aktive Mitglieder
+                        </label>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>Geburtstage:</h4>
+                        <div class="date-range">
+                            <input type="date" id="birthday-date" placeholder="Datum">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <span>+</span>
+                                <input type="number" id="birthday-tolerance" min="0" max="365" value="7" style="width: 60px;">
+                                <span>Tage</span>
+                            </label>
+                        </div>
+                        <small style="color: var(--text-secondary); font-size: 12px;">Zeigt Geburtstage am ausgewählten Datum + X Tage danach</small>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>Jubiläum:</h4>
+                        <div class="jubilee-filter">
+                            <input type="month" id="jubilee-month" placeholder="YYYY-MM">
+                            <input type="text" id="jubilee-years" placeholder="Jahre (z.B. 3,5,10,25)" value="10,20,25,30,40,50,60,70,80,90,100" style="flex: 1;">
+                        </div>
+                        <small style="color: var(--text-secondary); font-size: 12px;">Komma-getrennte Liste: 10,20,25,30,40,50,60,70,80,90,100</small>
+                    </div>
+
+                    <button class="btn-primary" id="apply-filters">Filter anwenden</button>
+                    <button class="btn-secondary" id="reset-filters">Zurücksetzen</button>
+                </div>
+            </div>
+
+            <!-- Aktionen -->
+            <div class="action-bar">
+                <div class="selection-info">
+                    <div class="selection-actions">
+                        <button class="btn-link" id="select-all">
+                            <span class="icon">☑</span>
+                            Alle auswählen
+                        </button>
+                        <button class="btn-link" id="deselect-all">
+                            <span class="icon">☐</span>
+                            Alle abwählen
+                        </button>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn-secondary" id="settings-btn">
+                        <span class="icon">⚙</span>
+                        Einstellungen
+                    </button>
+                    <button class="btn-primary" id="print-addresses" disabled>
+                        <span class="icon">🖨</span>
+                        Drucken (<span id="print-count">0</span>)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-bar">
+                <div class="page-size-selector">
+                    <label>Pro Seite:</label>
+                    <select id="page-size">
+                        <option value="25" selected>25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="all">Alle</option>
+                    </select>
+                </div>
+                <div class="page-info" id="page-info">Seite 1 von 1</div>
+                <div class="page-controls">
+                    <button id="prev-page" disabled>‹ Zurück</button>
+                    <button id="next-page" disabled>Weiter ›</button>
+                </div>
+            </div>
+
+            <!-- Adressliste -->
+            <div class="address-list" id="address-list">
+                <div class="loading-spinner">Lade Adressen...</div>
+            </div>
+
+            <!-- Einstellungen Modal -->
+            <div class="modal hidden" id="settings-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Druckeinstellungen</h3>
+                        <button class="modal-close" id="close-settings">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="setting-group">
+                            <label>
+                                <input type="checkbox" id="show-cutlines" checked>
+                                Schnittlinien anzeigen
+                            </label>
+                        </div>
+
+                        <div class="setting-group">
+                            <h4>Absenderadresse:</h4>
+                            <textarea id="sender-address" rows="4" placeholder="Max Mustermann&#10;Musterstraße 1&#10;12345 Musterstadt"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-secondary" id="cancel-settings">Abbrechen</button>
+                        <button class="btn-primary" id="save-settings">Speichern</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2FA Modal für Easy Login -->
+    <div class="modal hidden" id="easy-login-2fa-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔐 2FA Code eingeben</h3>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 12px; color: var(--text-secondary);">
+                    Bitte geben Sie den 2FA-Code ein, um den Login abzuschließen. 
+                    Sie können den Code auch auf Ihrem PWA-Gerät eingeben.
+                </p>
+                <div class="setting-group">
+                    <input type="text" id="easy-login-2fa-input" placeholder="6-stelliger Code" 
+                           maxlength="6" pattern="[0-9]{6}" autocomplete="off"
+                           style="width: 100%; padding: 12px; font-size: 18px; text-align: center; letter-spacing: 4px;">
+                </div>
+                <div id="easy-login-2fa-status" class="hidden" style="margin-top: 12px; padding: 8px; border-radius: 4px; text-align: center;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancel-easy-login-2fa">Abbrechen</button>
+                <button class="btn-primary" id="submit-easy-login-2fa">Verifizieren</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="vendor/peerjs.min.js"></script>
+    <script src="vendor/qrcode.min.js"></script>
+    <script src="sidebar.js"></script>
+</body>
+
+</html>
