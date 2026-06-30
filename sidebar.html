@@ -17,6 +17,12 @@
             </svg>
             Start
         </button>
+        <button class="nav-item" data-page="arbeitszeit">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+            </svg>
+            Arbeitszeit
+        </button>
         <button class="nav-item" data-page="adressen">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path
@@ -93,6 +99,115 @@
                             <li>Login auswählen oder manuell eingeben</li>
                             <li>Login absenden → AdminPlus meldet sich an</li>
                         </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Arbeitszeit Seite -->
+        <div class="page" id="page-arbeitszeit">
+            <div class="page-header">
+                <h1>Arbeitszeit-Erfassung</h1>
+                <p class="subtitle">Verwalten Sie Ihre Arbeitszeiten, Urlaub und Überstunden</p>
+            </div>
+
+            <!-- Fortschrittsbalken für Batch-Operationen -->
+            <div id="progress-container" class="progress-container hidden">
+                <div class="progress-content">
+                    <div class="progress-header">
+                        <span id="progress-title">Arbeitszeiten werden verarbeitet...</span>
+                        <button id="cancel-progress" class="btn-icon" title="Abbrechen">✕</button>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <div class="progress-info">
+                        <span id="progress-count">0 / 0</span>
+                        <span id="progress-percentage">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vorschläge Section -->
+            <div id="suggestions-container" class="suggestions-section hidden">
+                <div class="suggestions-header">
+                    <h2>💡 Vorschläge</h2>
+                    <p>Zeiträume, in denen Sie möglicherweise Arbeitszeiten vergessen haben einzutragen</p>
+                </div>
+                <div id="suggestions-list" class="suggestions-list"></div>
+            </div>
+
+            <!-- Statistiken -->
+            <div class="stats-bar">
+                <div class="stat-card">
+                    <span class="stat-label">Überstunden</span>
+                    <span class="stat-value" id="stat-overtime">0h</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Resturlaub</span>
+                    <span class="stat-value" id="stat-vacation">0 Tage</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Krankheit</span>
+                    <span class="stat-value" id="stat-sick">0 Tage</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Diesen Monat</span>
+                    <span class="stat-value" id="stat-month-hours">0h</span>
+                </div>
+            </div>
+
+            <!-- Empfehlungs-Container -->
+            <div id="recommendations-container" class="hidden"></div>
+
+            <!-- Aktionsbottons -->
+            <div class="action-bar">
+                <div class="action-buttons">
+                    <button class="btn-primary" id="quick-add-time">⚡ Schnell hinzufügen</button>
+                    <button class="btn-secondary" id="batch-add-time">📅 Mehrere Tage</button>
+                </div>
+            </div>
+
+            <!-- Kalender-Navigation -->
+            <div class="calendar-nav">
+                <button id="prev-month" class="nav-arrow">‹</button>
+                <div class="month-year" id="month-year">Januar 2026</div>
+                <button id="next-month" class="nav-arrow">›</button>
+                <button id="today-btn" class="btn-secondary">Heute</button>
+            </div>
+
+            <!-- Kalender -->
+            <div id="calendar" class="calendar-grid"></div>
+
+            <!-- Legende -->
+            <div class="calendar-legend">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%;">
+                    <!-- Erste Reihe -->
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #4caf50;"></div>
+                        <span>Arbeitszeit 8h+</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ff9800;"></div>
+                        <span>Unvollständig &lt;8h</span>
+                    </div>
+                    <!-- Zweite Reihe -->
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #9c27b0;"></div>
+                        <span>🏖 Urlaub</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ff5722;"></div>
+                        <span>🎉 Feiertag</span>
+                    </div>
+                    <!-- Dritte Reihe -->
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f44336;"></div>
+                        <span>🤒 Krankheit</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #1e88e5;"></div>
+                        <span>📋 Geplante Zeit</span>
                     </div>
                 </div>
             </div>
@@ -292,9 +407,249 @@
         </div>
     </div>
 
+    <!-- Schnell Hinzufügen Modal -->
+    <div class="modal hidden" id="quick-add-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚡ Arbeitszeit schnell hinzufügen</h3>
+                <button class="modal-close" id="close-quick-add">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label>Datum:</label>
+                    <input type="date" id="quick-date" style="width: 100%;">
+                </div>
+                <div class="setting-group">
+                    <label>Von:</label>
+                    <input type="time" id="quick-start-time" style="width: 100%;">
+                </div>
+                <div class="setting-group">
+                    <label>Bis:</label>
+                    <input type="time" id="quick-end-time" style="width: 100%;">
+                </div>
+                <div class="setting-group">
+                    <label>Notiz (optional):</label>
+                    <textarea id="quick-note" rows="3" placeholder="z.B. Homeoffice, Projekt X..."></textarea>
+                </div>
+                <div id="quick-add-error" class="hidden" style="padding: 8px; background: #ffebee; color: #c62828; border-radius: 4px; margin-top: 8px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancel-quick-add">Abbrechen</button>
+                <button class="btn-primary" id="submit-quick-add">Hinzufügen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mehrere Tage Modal -->
+    <div class="modal hidden" id="batch-add-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📅 Arbeitszeiten für mehrere Tage</h3>
+                <button class="modal-close" id="close-batch-add">×</button>
+            </div>
+            <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
+                <div class="setting-group">
+                    <label>Von Datum:</label>
+                    <input type="date" id="batch-start-date" style="width: 100%;">
+                </div>
+                <div class="setting-group">
+                    <label>Bis Datum:</label>
+                    <input type="date" id="batch-end-date" style="width: 100%;">
+                </div>
+                
+                <!-- Custom Wochentag-Zeiten Toggle -->
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="batch-custom-weekdays">
+                        Unterschiedliche Zeiten pro Wochentag
+                    </label>
+                </div>
+                
+                <!-- Standard: Gleiche Zeiten für alle Tage -->
+                <div id="batch-standard-times">
+                    <div class="setting-group">
+                        <label>Tägliche Arbeitszeit:</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="time" id="batch-start-time" placeholder="Von" style="flex: 1;">
+                            <input type="time" id="batch-end-time" placeholder="Bis" style="flex: 1;">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Custom: Pro Wochentag -->
+                <div id="batch-weekday-times" class="hidden">
+                    <div class="setting-group">
+                        <label style="font-weight: 600; display: block; margin-bottom: 12px;">📅 Arbeitszeiten pro Wochentag:</label>
+                        <div style="display: grid; grid-template-columns: 1fr; gap: 12px;">
+                            <!-- Montag -->
+                            <div style="padding: 12px; background: #f5f5f5; border-radius: 8px; border-left: 4px solid #ff9800;">
+                                <label style="display: block; font-weight: 600; color: #ff9800; margin-bottom: 8px; font-size: 14px;">📍 Montag</label>
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <input type="time" id="batch-mon-start" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <span style="color: #999;">-</span>
+                                    <input type="time" id="batch-mon-end" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                </div>
+                            </div>
+                            
+                            <!-- Dienstag -->
+                            <div style="padding: 12px; background: #f5f5f5; border-radius: 8px; border-left: 4px solid #2196f3;">
+                                <label style="display: block; font-weight: 600; color: #2196f3; margin-bottom: 8px; font-size: 14px;">📍 Dienstag</label>
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <input type="time" id="batch-tue-start" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <span style="color: #999;">-</span>
+                                    <input type="time" id="batch-tue-end" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                </div>
+                            </div>
+                            
+                            <!-- Mittwoch -->
+                            <div style="padding: 12px; background: #f5f5f5; border-radius: 8px; border-left: 4px solid #4caf50;">
+                                <label style="display: block; font-weight: 600; color: #4caf50; margin-bottom: 8px; font-size: 14px;">📍 Mittwoch</label>
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <input type="time" id="batch-wed-start" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <span style="color: #999;">-</span>
+                                    <input type="time" id="batch-wed-end" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                </div>
+                            </div>
+                            
+                            <!-- Donnerstag -->
+                            <div style="padding: 12px; background: #f5f5f5; border-radius: 8px; border-left: 4px solid #9c27b0;">
+                                <label style="display: block; font-weight: 600; color: #9c27b0; margin-bottom: 8px; font-size: 14px;">📍 Donnerstag</label>
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <input type="time" id="batch-thu-start" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <span style="color: #999;">-</span>
+                                    <input type="time" id="batch-thu-end" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                </div>
+                            </div>
+                            
+                            <!-- Freitag -->
+                            <div style="padding: 12px; background: #f5f5f5; border-radius: 8px; border-left: 4px solid #ff5722;">
+                                <label style="display: block; font-weight: 600; color: #ff5722; margin-bottom: 8px; font-size: 14px;">📍 Freitag</label>
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <input type="time" id="batch-fri-start" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <span style="color: #999;">-</span>
+                                    <input type="time" id="batch-fri-end" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                </div>
+                            </div>
+                            
+                            <!-- Samstag -->
+                            <div style="padding: 12px; background: #e8eaf6; border-radius: 8px; border-left: 4px solid #5c6bc0;">
+                                <label style="display: block; font-weight: 600; color: #5c6bc0; margin-bottom: 8px; font-size: 14px;">📍 Samstag</label>
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <input type="time" id="batch-sat-start" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <span style="color: #999;">-</span>
+                                    <input type="time" id="batch-sat-end" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                </div>
+                            </div>
+                            
+                            <!-- Sonntag -->
+                            <div style="padding: 12px; background: #e8eaf6; border-radius: 8px; border-left: 4px solid #3949ab;">
+                                <label style="display: block; font-weight: 600; color: #3949ab; margin-bottom: 8px; font-size: 14px;">📍 Sonntag</label>
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <input type="time" id="batch-sun-start" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <span style="color: #999;">-</span>
+                                    <input type="time" id="batch-sun-end" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <label style="font-weight: 600; display: block; margin-bottom: 8px;">⏭ Überspringen:</label>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
+                            <input type="checkbox" id="batch-weekdays-only" checked>
+                            🚫 Wochenende (Sa &amp; So)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
+                            <input type="checkbox" id="batch-skip-vacation" checked>
+                            🏖 Urlaubstage
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
+                            <input type="checkbox" id="batch-skip-sick" checked>
+                            🤒 Krankheitstage
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
+                            <input type="checkbox" id="batch-skip-holiday" checked>
+                            🎉 Feiertage
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
+                            <input type="checkbox" id="batch-skip-existing" checked>
+                            📝 Tage mit vorhandener Arbeitszeit
+                        </label>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <label>Notiz (optional):</label>
+                    <textarea id="batch-note" rows="2" placeholder="z.B. Projekt X..."></textarea>
+                </div>
+                <div id="batch-preview" style="padding: 8px; background: #f5f5f5; border-radius: 4px; max-height: 150px; overflow-y: auto; margin-top: 8px;"></div>
+                <div id="batch-add-error" class="hidden" style="padding: 8px; background: #ffebee; color: #c62828; border-radius: 4px; margin-top: 8px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancel-batch-add">Abbrechen</button>
+                <button class="btn-primary" id="submit-batch-add">Hinzufügen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Arbeitszeit Bearbeiten Modal -->
+    <div class="modal hidden" id="edit-time-modal" style="z-index: 10001;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✏️ Arbeitszeit bearbeiten</h3>
+                <button class="modal-close" id="close-edit-time">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label>Datum:</label>
+                    <input type="date" id="edit-date" style="width: 100%;" disabled>
+                </div>
+                <div class="setting-group">
+                    <label>Von:</label>
+                    <input type="time" id="edit-start-time" style="width: 100%;">
+                </div>
+                <div class="setting-group">
+                    <label>Bis:</label>
+                    <input type="time" id="edit-end-time" style="width: 100%;">
+                </div>
+                <div class="setting-group">
+                    <label>Notiz (optional):</label>
+                    <textarea id="edit-note" rows="3" placeholder="z.B. Homeoffice, Projekt X..."></textarea>
+                </div>
+                <div id="edit-time-error" class="hidden" style="padding: 8px; background: #ffebee; color: #c62828; border-radius: 4px; margin-top: 8px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancel-edit-time">Abbrechen</button>
+                <button class="btn-primary" id="submit-edit-time">Speichern</button>
+                <button class="btn-secondary" id="delete-edit-time" style="background: #f44336; color: white;">Löschen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tagesdetail Modal (z-index: 10000) -->
+    <div class="modal hidden" id="day-detail-modal" style="z-index: 10000;">
+        <div class="modal-content">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 id="day-detail-date">Montag, 1. Januar 2026</h3>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-primary" id="add-quick-entry-btn" style="padding: 6px 12px; font-size: 13px; white-space: nowrap;" title="Schnell hinzufügen">➕ Hinzufügen</button>
+                    <button class="modal-close" id="close-day-detail">×</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="day-detail-content"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="close-day-detail-btn">Schließen</button>
+            </div>
+        </div>
+    </div>
+
     <script src="vendor/peerjs.min.js"></script>
     <script src="vendor/qrcode.min.js"></script>
     <script src="sidebar.js"></script>
+    <script src="arbeitszeit.js"></script>
 </body>
 
 </html>

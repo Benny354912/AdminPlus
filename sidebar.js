@@ -146,7 +146,34 @@
             }
         } else if (data?.type === 'AdminPlusSessionId') {
             // Session ID wird über Promise in getSessionId behandelt
+        } else if (data?.type === 'AdminPlusRequestSessionId') {
+            // Relay: arbeitszeit iframe fragt nach Session-ID
+            // Weiterleiten zum parent und Antwort zurückgeben
+            handleSessionIdRequest(event.source);
         }
+    }
+
+    function handleSessionIdRequest(sourceWindow) {
+        // Frage parent nach Session-ID
+        window.parent.postMessage({ type: 'AdminPlusRequestSessionId' }, '*');
+        
+        const handler = (event) => {
+            if (event?.data?.type === 'AdminPlusSessionId') {
+                window.removeEventListener('message', handler);
+                // Gebe Antwort an arbeitszeit iframe zurück
+                sourceWindow.postMessage({
+                    type: 'AdminPlusSessionId',
+                    sessionId: event.data.sessionId || ''
+                }, '*');
+            }
+        };
+        
+        window.addEventListener('message', handler);
+        
+        // Timeout nach 3 Sekunden
+        setTimeout(() => {
+            window.removeEventListener('message', handler);
+        }, 3000);
     }
 
     function applyAuthState(state) {
@@ -156,6 +183,11 @@
         const navAdressen = document.querySelector('.nav-item[data-page="adressen"]');
         if (navAdressen) {
             navAdressen.classList.toggle('hidden', !loggedIn);
+        }
+
+        const navArbeitszeit = document.querySelector('.nav-item[data-page="arbeitszeit"]');
+        if (navArbeitszeit) {
+            navArbeitszeit.classList.toggle('hidden', !loggedIn);
         }
 
         const loginRequiredText = document.getElementById('login-required-text');

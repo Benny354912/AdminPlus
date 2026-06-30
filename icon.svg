@@ -1,0 +1,20 @@
+<svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="128" height="128" fill="#FF9800" rx="8"/>
+  
+  <!-- Inner background -->
+  <rect x="8" y="8" width="112" height="112" fill="#FFA726" rx="6"/>
+  
+  <!-- Plus symbol - vertical bar -->
+  <rect x="56" y="24" width="16" height="80" fill="#FFFFFF" rx="2"/>
+  
+  <!-- Plus symbol - horizontal bar -->
+  <rect x="24" y="56" width="80" height="16" fill="#FFFFFF" rx="2"/>
+  
+  <!-- Shadow/depth effect -->
+  <circle cx="64" cy="64" r="58" fill="none" stroke="#E65100" stroke-width="2" opacity="0.3"/>
+  
+  <!-- Accent dots -->
+  <circle cx="102" cy="26" r="4" fill="#FFFFFF" opacity="0.6"/>
+  <circle cx="26" cy="102" r="4" fill="#FFFFFF" opacity="0.6"/>
+</svg>

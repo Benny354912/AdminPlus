@@ -5,7 +5,7 @@ Dieses Dokument dient als Build- und Reproduktionsanleitung fuer die Add-on-Prue
 ## Enthaltene Build-Dateien
 
 - `build.ps1`: Build-Skript fuer reproduzierbare Pakete aus dem Quellordner.
-- `manifest.json` und alle Dateien unter `AdminPluss/`: Erweiterungs-Quelltext.
+- `manifest.json` und alle Dateien unter `AdminPlus/`: Erweiterungs-Quelltext.
 
 ## Build-Umgebung
 
@@ -16,23 +16,23 @@ Dieses Dokument dient als Build- und Reproduktionsanleitung fuer die Add-on-Prue
 
 ## Schritt-fuer-Schritt Build
 
-Aus dem Workspace-Root (Ordner, der `AdminPluss` enthaelt):
+Aus dem Workspace-Root (Ordner, der `AdminPlus` enthaelt):
 
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\AdminPluss\build.ps1 -SourceDir ".\AdminPluss" -OutputDir ".\dist"
+.\AdminPlus\build.ps1 -SourceDir ".\AdminPlus" -OutputDir ".\dist"
 ```
 
 Optional mit fixem Key fuer stabile CRX-ID:
 
 ```powershell
-.\AdminPluss\build.ps1 -SourceDir ".\AdminPluss" -OutputDir ".\dist" -PemKeyPath ".\v1.0.0-Beta.pem"
+.\AdminPlus\build.ps1 -SourceDir ".\AdminPlus" -OutputDir ".\dist" -PemKeyPath ".\v1.0.0-Beta.pem"
 ```
 
 Optional mit explizitem Versionslabel:
 
 ```powershell
-.\AdminPluss\build.ps1 -SourceDir ".\AdminPluss" -OutputDir ".\dist" -VersionTag "v1.0.4-Beta"
+.\AdminPlus\build.ps1 -SourceDir ".\AdminPlus" -OutputDir ".\dist" -VersionTag "v1.0.4-Beta"
 ```
 
 ## Build-Ergebnis
@@ -58,8 +58,3 @@ Folgende externe Open-Source-Bibliotheken sind als Vendor-Dateien enthalten:
 - `vendor/qrcode.min.js`
 
 Diese Dateien sind Drittanbieter-Artefakte und nicht lokal generiert.
-
-## Empfehlung fuer AMO-Upload
-
-- Falls Quelltext-Einreichung gefordert ist, `adminplus-<version>.zip` als Source-Code hochladen.
-- Dieses README und `build.ps1` muessen im eingereichten Quelltext enthalten sein.
